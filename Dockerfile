@@ -8,6 +8,8 @@ RUN apk add --no-cache git=2.47.3-r0
 # Copy the current directory contents into the container
 COPY . .
 
+RUN chmod +x build.sh   # 添加这一行
+
 # Build the application
 RUN --mount=type=cache,target=/go/pkg \
     --mount=type=cache,target=/root/.cache/go-build \
