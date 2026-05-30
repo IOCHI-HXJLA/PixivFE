@@ -3,7 +3,7 @@ FROM --platform=$BUILDPLATFORM docker.io/library/golang:1.24.3-alpine3.21 AS bui
 WORKDIR /app
 
 # Install build dependencies
-RUN apk add --no-cache git=2.47.2-r0
+RUN apk add --no-cache git=2.47.3-r0
 
 # Copy the current directory contents into the container
 COPY . .
