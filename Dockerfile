@@ -11,8 +11,8 @@ COPY . .
 RUN chmod +x build.sh   # 添加这一行
 
 # Build the application
-RUN --mount=type=cache,target=/go/pkg \
-    --mount=type=cache,target=/root/.cache/go-build \
+RUN --mount=type=cache,id=gomod,target=/go/pkg \
+    --mount=type=cache,id=gobuild,target=/root/.cache/go-build \
     ./build.sh build_docker
 
 # Minimal passwd entry for non-privileged user
