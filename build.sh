@@ -7,12 +7,25 @@ set -o errexit
 BINARY_NAME="pixivfe"
 GOOS=${GOOS:-$(go env GOOS)}
 GOARCH=${GOARCH:-$(go env GOARCH)}
-GIT_COMMIT_DATE=$(git show -s --format=%cd --date=format:"%Y.%m.%d")
-GIT_COMMIT_HASH=$(git rev-parse --short HEAD)
-REVISION="${GIT_COMMIT_DATE}-${GIT_COMMIT_HASH}"
-UNCOMMITTED_CHANGES=$(git status --porcelain)
-if [ -n "$UNCOMMITTED_CHANGES" ]; then
-	REVISION="${REVISION}+dirty"
+# 尝试获取版本信息，如果没有 .git 则使用备用值
+if [ -d .git ]; then
+    GIT_COMMIT_DATE=$(git show -s --format=%cd --date=format:"%Y.%m.%d")
+    GIT_COMMIT_HASH=$(git rev-parse --short HEAD)
+    REVISION="${GIT_COMMIT_DATE}-${GIT_COMMIT_HASH}"
+    UNCOMMITTED_CHANGES=$(git status --porcelain)
+    if [ -n "$UNCOMMITTED_CHANGES" ]; then
+        REVISION="${REVISION}+dirty"
+    fi
+else
+    # Railway 等环境没有 .git 时的备用方案
+    GIT_COMMIT_DATE="unknown"
+    # 尝试使用 Railway 提供的环境变量（如有）
+    if [ -n "$RAILWAY_GIT_COMMIT_SHA" ]; then
+        GIT_COMMIT_HASH=$(echo "$RAILWAY_GIT_COMMIT_SHA" | cut -c1-7)
+    else
+        GIT_COMMIT_HASH="docker"
+    fi
+    REVISION="${GIT_COMMIT_DATE}-${GIT_COMMIT_HASH}"
 fi
 
 # Check for .env file and load it unless explicitly told not to
