@@ -11,9 +11,7 @@ COPY . .
 RUN chmod +x build.sh   # 添加这一行
 
 # Build the application
-RUN --mount=type=cache,id=cache-gomod,target=/go/pkg \
-    --mount=type=cache,id=cache-gobuild,target=/root/.cache/go-build \
-    ./build.sh build_docker
+RUN ./build.sh build_docker
 
 # Minimal passwd entry for non-privileged user
 RUN echo "pixivfe:x:10001:10001::/:/" >> /etc/passwd
